@@ -31,7 +31,7 @@ export class BaseException extends Error {
    * Builds an BaseExceptionError
    * @returns An instance of BaseExceptionError containing information provided during instantiation
    */
-  public apiResponse(): BaseExceptionError {
+  private apiResponse(): BaseExceptionError {
     return {
       status: "error",
       statusCode: this.statusCode,
@@ -44,20 +44,20 @@ export class BaseException extends Error {
 
   /**
    * Builds an BaseExceptionError based on any exception type
-   * @param except Any exception
+   * @param exception Any exception
    * @returns An instance of BaseExceptionError containing whatever information could be retrieved from Error instance
    */
-  public static getApiResponse(except: any): BaseExceptionError {
-    if (except instanceof BaseException) {
-      return except.apiResponse();
+  public static getApiResponse(exception: any): BaseExceptionError {
+    if (exception instanceof BaseException) {
+      return exception.apiResponse();
     }
 
     return {
       status: "error",
       statusCode: 500,
       error: {
-        message: except.message,
-        errors: except.stack,
+        message: exception.message,
+        errors: exception.stack,
       },
     };
   }

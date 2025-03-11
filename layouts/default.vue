@@ -3,7 +3,6 @@ import { css } from "styled-system/css";
 import { flex } from "styled-system/patterns";
 import Sidebar from "~/ui/components/sidebar/sidebar.vue";
 import MenuBar from "~/ui/components/menu-bar/menu-bar.vue";
-import { useDisplayPreferences } from "~/composables/use-display-preferences";
 
 const { displayPreferences } = useDisplayPreferences();
 

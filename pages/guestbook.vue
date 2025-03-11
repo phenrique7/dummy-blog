@@ -83,7 +83,7 @@ const signText = ref("");
                 color: 'text_main',
                 position: 'relative',
                 fontWeight: 'semibold',
-				backgroundColor: 'medium_background',
+                backgroundColor: 'medium_background',
                 _hover: {
                   cursor: 'pointer',
                 },
@@ -97,11 +97,9 @@ const signText = ref("");
           </button>
         </template>
       </Input>
-	  <div :class="css({ w: '4.5rem' })">
-	    <Button size="sm" variant="ghost">
-		  Sign out
-	    </Button>
-	  </div>
+      <div :class="css({ w: '4.5rem' })">
+        <Button size="sm" variant="ghost"> Sign out </Button>
+      </div>
     </div>
   </div>
 </template>

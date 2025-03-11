@@ -7,7 +7,6 @@ import ListIcon from "~/ui/icons/list-icon.vue";
 import LightIcon from "~/ui/icons/light-icon.vue";
 import SearchIcon from "~/ui/icons/search-icon.vue";
 import ArrowUpIcon from "~/ui/icons/arrow-up-icon.vue";
-import { useDisplayPreferences } from "~/composables/use-display-preferences";
 import IconButton from "~/ui/components/icon-button/icon-button.vue";
 
 const { displayPreferences, setPreferredTheme, setPreferredDisplay } =

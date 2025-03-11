@@ -11,6 +11,7 @@ export class PingHandler extends BaseHandler {
 
   /**
    * Ping API.
+   * @returns Ping response ("pong")
    */
   public ping() {
     return this.handleRequest(() => Promise.resolve({ ping: "pong" }));

@@ -5,10 +5,10 @@ import { BaseException } from "~/lib/common/exception/base.exception";
  */
 export class BadRequestException extends BaseException {
   /**
-   * Builds a new InvalidBodyException
+   * Builds a new BadRequestException
    * @param errors - Zod validation errors
    */
-  constructor(errors: string) {
-    super(400, "Invalid request", errors);
+  constructor(errors: unknown) {
+    super(400, "Bad request", errors);
   }
 }

@@ -14,7 +14,7 @@ export class Parser<T> {
   /**
    * Parse a JSON string, validating it against the provided schema
    * @param body Body to be parsed
-   * @returns Parsed entity, throws InvalidBodyException otherwise.
+   * @returns Parsed entity, throws BadRequestException otherwise.
    */
   public parseBody(body: any): T {
     const response = this.schema.safeParse(body);
