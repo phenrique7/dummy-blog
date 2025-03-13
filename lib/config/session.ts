@@ -2,11 +2,8 @@ import type { SessionConfig } from "h3";
 import { SESSION_COOKIE_PASSWORD } from "~/constants/envs";
 
 export type SessionData = {
-  id: string;
-  expiresAt: Date;
-  guest: {
-    id: number;
-  };
+  guestId: number;
+  sessionId: number;
 };
 
 export const sessionConfig: SessionConfig = {
