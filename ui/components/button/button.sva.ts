@@ -7,12 +7,14 @@ export const buttonSva = sva({
       width: "100%",
       border: "none",
       cursor: "pointer",
+      color: "text_main",
       borderRadius: "sm",
       alignItems: "center",
       whiteSpace: "nowrap",
       fontWeight: "medium",
       display: "inline-flex",
       justifyContent: "center",
+      transition: "background-color 0.2s",
     },
     icon: {
       display: "flex",
@@ -67,10 +69,9 @@ export const buttonSva = sva({
       },
       ghost: {
         root: {
-          color: "db_black",
           backgroundColor: "transparent",
           _hover: {
-            backgroundColor: "stone.100",
+            backgroundColor: "medium_background",
           },
           _focus: {
             outline: "2px solid rgb(10, 13, 39)",
@@ -79,7 +80,6 @@ export const buttonSva = sva({
       },
       oauth: {
         root: {
-          color: "text_main",
           border: "1px solid",
           borderColor: "borders",
           backgroundColor: "medium_background",

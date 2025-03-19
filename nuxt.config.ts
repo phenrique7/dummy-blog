@@ -7,6 +7,10 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
 
+  hub: {
+    database: true,
+  },
+
   alias: {
     "styled-system": resolve("./styled-system"),
   },

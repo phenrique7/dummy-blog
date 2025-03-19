@@ -1,4 +1,4 @@
-export function useCookieManager() {
+export function useDisplayPreferences() {
   const displayPreferences = useCookie<{
     theme: "dark" | "light";
     display: "list" | "grid";

@@ -4,7 +4,7 @@ import { grid } from "styled-system/patterns";
 import PostCard from "~/ui/components/post-card/post-card.vue";
 import EmptyState from "~/ui/components/empty-state/empty-state.vue";
 
-const { displayPreferences } = useCookieManager();
+const { displayPreferences } = useDisplayPreferences();
 
 const { data } = await useAsyncData("posts", () =>
   queryCollection("article")

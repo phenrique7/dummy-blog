@@ -107,7 +107,7 @@ const socialNetworks = [
             css({
               display: 'block',
               color: 'text_main',
-              transition: 'color 0.3s',
+              transition: 'color 0.2s',
               '&:hover': { color: 'highlight' },
               w: socialNetwork.label.includes('X') ? 7 : 8,
               h: socialNetwork.label.includes('X') ? 7 : 8,

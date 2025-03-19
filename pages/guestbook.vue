@@ -3,6 +3,7 @@ import { css } from "styled-system/css";
 import { container, hstack } from "styled-system/patterns";
 import GoogleIcon from "~/ui/icons/google-icon.vue";
 import GitHubIcon from "~/ui/icons/github-icon.vue";
+import Input from "~/ui/components/input/input.vue";
 import Button from "~/ui/components/button/button.vue";
 
 useSeoMeta({
@@ -13,6 +14,17 @@ useSeoMeta({
   ogImage: "https://example.com/image.png",
   twitterCard: "summary_large_image",
 });
+
+const signText = ref("");
+const route = useRoute();
+
+const { data } = await useFetch<{ logged: boolean }>("/api/session");
+
+const logged = data.value?.logged;
+
+function onGithubSignIn() {
+  window.location.href = `/login/github?redirectUrl=${route.path}`;
+}
 </script>
 
 <template>
@@ -41,6 +53,7 @@ useSeoMeta({
       Sign my guestbook
     </h1>
     <div
+      v-if="!logged"
       :class="
         hstack({
           mt: 6,
@@ -56,12 +69,48 @@ useSeoMeta({
         </template>
         Sign in with Google
       </Button>
-      <Button variant="oauth">
+      <Button variant="oauth" @click="onGithubSignIn">
         <template v-slot:icon>
           <GitHubIcon :class="css({ fill: 'text_main' })" />
         </template>
         Sign in with GitHub
       </Button>
+    </div>
+    <div
+      v-else
+      :class="css({ maxW: '100%', mt: 6, md: { maxW: 'xl', mt: 8 } })"
+    >
+      <Input
+        v-model="signText"
+        inputId="sign-guestbook"
+        placeholder="Your message..."
+      >
+        <template v-slot:right-element>
+          <button
+            :class="
+              css({
+                padding: 3,
+                fontSize: 'xs',
+                color: 'text_main',
+                position: 'relative',
+                fontWeight: 'semibold',
+                backgroundColor: 'medium_background',
+                _hover: {
+                  cursor: 'pointer',
+                },
+                _focus: {
+                  outline: '2px solid rgb(10, 13, 39)',
+                },
+              })
+            "
+          >
+            Sign
+          </button>
+        </template>
+      </Input>
+      <div :class="css({ w: '4.5rem' })">
+        <Button size="sm" variant="ghost"> Sign out </Button>
+      </div>
     </div>
   </div>
 </template>
