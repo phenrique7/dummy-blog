@@ -4,7 +4,8 @@ import { github } from "~/lib/config/oauth";
 import { GITHUB_OAUTH_STATE } from "~/constants/app";
 
 export default defineEventHandler(function getAuthorizationURL(event) {
-  const state = generateState();
+  const query = getQuery<{ redirectUrl: string }>(event);
+  const state = generateState() + `?redirectUrl=${query.redirectUrl}`;
   const url = github.createAuthorizationURL(state, ["user:read"]);
 
   setCookie(event, GITHUB_OAUTH_STATE, state, {
@@ -15,5 +16,5 @@ export default defineEventHandler(function getAuthorizationURL(event) {
     maxAge: 60 * 10, // 10 minutes (in seconds)
   });
 
-  return navigateTo(url.toString());
+  return sendRedirect(event, url.toString());
 });

@@ -21,9 +21,11 @@ CREATE TABLE IF NOT EXISTS guestbook_posts (
 CREATE TABLE IF NOT EXISTS article_comments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     guest_id INTEGER NOT NULL,
+    article_id TEXT NOT NULL,
     comment TEXT NOT NULL,
     created_at INTEGER NOT NULL,
-    FOREIGN KEY (guest_id) REFERENCES guests(id)
+    FOREIGN KEY (guest_id) REFERENCES guests(id),
+    FOREIGN KEY (article_id) REFERENCES _content_article(id)
 );
 
 CREATE TABLE IF NOT EXISTS sessions (

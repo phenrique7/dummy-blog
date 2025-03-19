@@ -89,9 +89,11 @@ export default defineEventHandler(async function callback(event) {
 
   let guest = await guestService.getByProviderId(githubGuestId);
 
+  const goTo = state.split("?redirectUrl=")[1];
+
   if (guest !== null) {
     await sessionService.createSession(guest.id);
-    return navigateTo("/login/success");
+    return sendRedirect(event, goTo);
   }
 
   guest = await guestService.createGuest({
@@ -102,5 +104,5 @@ export default defineEventHandler(async function callback(event) {
 
   await sessionService.createSession(guest.id);
 
-  return navigateTo("/login/success");
+  return sendRedirect(event, goTo);
 });

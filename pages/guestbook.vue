@@ -15,8 +15,16 @@ useSeoMeta({
   twitterCard: "summary_large_image",
 });
 
-const logged = false;
 const signText = ref("");
+const route = useRoute();
+
+const { data } = await useFetch<{ logged: boolean }>("/api/session");
+
+const logged = data.value?.logged;
+
+function onGithubSignIn() {
+  window.location.href = `/login/github?redirectUrl=${route.path}`;
+}
 </script>
 
 <template>
@@ -61,14 +69,17 @@ const signText = ref("");
         </template>
         Sign in with Google
       </Button>
-      <Button variant="oauth">
+      <Button variant="oauth" @click="onGithubSignIn">
         <template v-slot:icon>
           <GitHubIcon :class="css({ fill: 'text_main' })" />
         </template>
         Sign in with GitHub
       </Button>
     </div>
-    <div v-else :class="css({ maxW: '100%', md: { maxW: 'xl' } })">
+    <div
+      v-else
+      :class="css({ maxW: '100%', mt: 6, md: { maxW: 'xl', mt: 8 } })"
+    >
       <Input
         v-model="signText"
         inputId="sign-guestbook"
