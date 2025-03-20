@@ -22,6 +22,10 @@ const { data } = await useFetch<{ logged: boolean }>("/api/session");
 
 const logged = data.value?.logged;
 
+function onGoogleSignIn() {
+  window.location.href = `/login/google?redirectUrl=${route.path}`;
+}
+
 function onGithubSignIn() {
   window.location.href = `/login/github?redirectUrl=${route.path}`;
 }
@@ -63,7 +67,7 @@ function onGithubSignIn() {
         })
       "
     >
-      <Button variant="oauth">
+      <Button variant="oauth" @click="onGoogleSignIn">
         <template v-slot:icon>
           <GoogleIcon />
         </template>

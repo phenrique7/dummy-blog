@@ -1,29 +1,33 @@
-import type { OAuth2Tokens } from "arctic";
-import { github } from "~/lib/config/oauth";
+import { decodeIdToken, type OAuth2Tokens } from "arctic";
+import { google } from "~/lib/config/oauth";
 import { Logger } from "~/lib/common/logger/logger";
-import { GITHUB_OAUTH_STATE } from "~/constants/app";
 import { GuestService } from "~/services/guest/service/guest.service";
+import { GOOGLE_OAUTH_STATE, GOOGLE_CODE_VERIFIER } from "~/constants/app";
 import { SessionService } from "~/services/session/service/session.service";
 
-type GitHubUserResponse = {
-  id: number;
-  name: string;
-};
-
 export default defineEventHandler(async function callback(event) {
-  const logger = new Logger("GitHubCallbackHandler");
+  const logger = new Logger("GoogleCallbackHandler");
   const guestService = new GuestService();
   const sessionService = new SessionService(event);
 
   const code = (getQuery(event).code ?? null) as string | null;
   const state = (getQuery(event).state ?? null) as string | null;
-  const storedState = getCookie(event, GITHUB_OAUTH_STATE) ?? null;
+  const storedState = getCookie(event, GOOGLE_OAUTH_STATE) ?? null;
+  const storedCodeVerifier =
+    getCookie(event, GOOGLE_CODE_VERIFIER) ?? null;
 
-  if (storedState === null || code === null || state === null) {
+  if (
+    code === null ||
+    state === null ||
+    storedState === null ||
+    storedCodeVerifier === null
+  ) {
     logger
       .level("error")
       .category("callback::Error")
-      .description("Missing GitHub oauth state, code or stored state")
+      .description(
+        "Missing Google oauth state, code, stored state or stored code verifier",
+      )
       .flush();
 
     return new Response("Please, restart the process.", {
@@ -45,37 +49,15 @@ export default defineEventHandler(async function callback(event) {
   let tokens: OAuth2Tokens;
 
   try {
-    tokens = await github.validateAuthorizationCode(code);
-  } catch (e) {
-    logger
-      .level("error")
-      .category("callback::Error")
-      .description("Error validating GitHub authorization code")
-      .add("error", e)
-      .flush();
-
-    return new Response("Please, restart the process.", {
-      status: 400,
-    });
-  }
-
-  let githubUserResult: GitHubUserResponse;
-
-  try {
-    const githubAccessToken = tokens.accessToken();
-
-    const userRequest = new Request("https://api.github.com/user");
-    userRequest.headers.set(
-      "Authorization",
-      `Bearer ${githubAccessToken}`,
+    tokens = await google.validateAuthorizationCode(
+      code,
+      storedCodeVerifier,
     );
-    const userResponse = await fetch(userRequest);
-    githubUserResult = await userResponse.json();
   } catch (e) {
     logger
       .level("error")
       .category("callback::Error")
-      .description("Error getting GitHub user info")
+      .description("Error validating Google authorization code")
       .add("error", e)
       .flush();
 
@@ -84,10 +66,14 @@ export default defineEventHandler(async function callback(event) {
     });
   }
 
-  const githubGuestId = githubUserResult.id;
-  const githubGuestName = githubUserResult.name;
+  const claims = decodeIdToken(tokens.idToken()) as {
+    sub: string;
+    name: string;
+  };
+  const googleGuestId = claims.sub;
+  const googleGuestName = claims.name;
 
-  let guest = await guestService.getByProviderId(githubGuestId.toString());
+  let guest = await guestService.getByProviderId(googleGuestId);
 
   const goTo = state.split("?redirectUrl=")[1];
 
@@ -97,9 +83,9 @@ export default defineEventHandler(async function callback(event) {
   }
 
   guest = await guestService.createGuest({
-    provider: "github",
-    name: githubGuestName,
-    providerId: githubGuestId.toString(),
+    provider: "google",
+    name: googleGuestName,
+    providerId: googleGuestId,
   });
 
   await sessionService.createSession(guest.id);
