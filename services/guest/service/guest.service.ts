@@ -46,16 +46,16 @@ export class GuestService {
    * @param providerId Provider id of the guest
    * @returns GuestDTO or null if not found
    */
-  public async getByProviderId(providerId: number): Promise<GuestDTO | null> {
+  public async getByProviderId(
+    providerId: string,
+  ): Promise<GuestDTO | null> {
     this.logger
       .level("debug")
-      .category("getByGithubId::Start")
+      .category("getByProviderId::Start")
       .add("providerId", providerId)
       .flush();
 
-    const guestResult = await this.guestRepository.filter({
-      providerId: providerId.toString(),
-    });
+    const guestResult = await this.guestRepository.filter({ providerId });
 
     if (guestResult === null) {
       this.logger
@@ -77,7 +77,7 @@ export class GuestService {
 
     this.logger
       .level("debug")
-      .category("getByGithubId::Result")
+      .category("getByProviderId::Result")
       .add("guest", guest)
       .flush();
 
