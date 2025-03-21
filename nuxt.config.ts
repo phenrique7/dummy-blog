@@ -28,5 +28,6 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxt/content",
     "@nuxthub/core",
+    "./modules/app-bootstrap.ts",
   ],
 });

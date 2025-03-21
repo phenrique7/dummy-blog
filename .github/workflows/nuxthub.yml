@@ -32,13 +32,6 @@ jobs:
 
       - name: Build application
         run: npm run build
-        env:
-          NUXT_APP_URL: ${{ vars.NUXT_APP_URL }}
-          NUXT_SESSION_COOKIE_PASSWORD: ${{ vars.NUXT_SESSION_COOKIE_PASSWORD }}
-          NUXT_GITHUB_CLIENT_ID: ${{ vars.NUXT_GITHUB_CLIENT_ID }}
-          NUXT_GITHUB_CLIENT_SECRET: ${{ vars.NUXT_GITHUB_CLIENT_SECRET }}
-          NUXT_GOOGLE_CLIENT_ID: ${{ vars.NUXT_GOOGLE_CLIENT_ID }}
-          NUXT_GOOGLE_CLIENT_SECRET: ${{ vars.NUXT_GOOGLE_CLIENT_SECRET }}
 
       - name: Deploy to NuxtHub
         uses: nuxt-hub/action@v1
