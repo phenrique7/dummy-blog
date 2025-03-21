@@ -1,4 +1,4 @@
-export const PROD = import.meta.env.NODE_ENV === "production";
+export const PROD = process.env.NODE_ENV === "production";
 
 export const SESSION_COOKIE_PASSWORD =
   process.env.NUXT_SESSION_COOKIE_PASSWORD;
