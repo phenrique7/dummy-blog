@@ -1,14 +1,26 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import dotenv from "dotenv";
 import { createResolver } from "@nuxt/kit";
 
 const { resolve } = createResolver(import.meta.url);
 
-dotenv.config();
-
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
+
+  runtimeConfig: {
+    public: {
+      appUrl: process.env.NUXT_APP_URL,
+    },
+    sessionCookiePassword: process.env.NUXT_SESSION_COOKIE_PASSWORD,
+    github: {
+      clientId: process.env.NUXT_GITHUB_CLIENT_ID,
+      clientSecret: process.env.NUXT_GITHUB_CLIENT_SECRET,
+    },
+    google: {
+      clientId: process.env.NUXT_GOOGLE_CLIENT_ID,
+      clientSecret: process.env.NUXT_GOOGLE_CLIENT_SECRET,
+    },
+  },
 
   hub: {
     database: true,
