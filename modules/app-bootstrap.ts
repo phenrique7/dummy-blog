@@ -3,11 +3,11 @@ import { defineNuxtModule } from "nuxt/kit";
 import { Logger } from "~/lib/common/logger/logger";
 
 const environmentVariablesSchema = z.object({
-  NUXT_APP_URL: z.string().trim().min(1),
+  NUXT_PUBLIC_APP_URL: z.string().trim().min(1),
   NUXT_SESSION_COOKIE_PASSWORD: z.string().trim().min(1),
-  NUXT_GITHUB_CLIENT_ID: z.string().trim().min(1),
+  NUXT_PUBLIC_GITHUB_CLIENT_ID: z.string().trim().min(1),
   NUXT_GITHUB_CLIENT_SECRET: z.string().trim().min(1),
-  NUXT_GOOGLE_CLIENT_ID: z.string().trim().min(1),
+  NUXT_PUBLIC_GOOGLE_CLIENT_ID: z.string().trim().min(1),
   NUXT_GOOGLE_CLIENT_SECRET: z.string().trim().min(1),
   NODE_ENV: z.enum(["development", "production", "test"] as const),
 });
