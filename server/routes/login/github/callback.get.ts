@@ -23,7 +23,7 @@ export default defineEventHandler(async function callback(event) {
   if (storedState === null || code === null || state === null) {
     logger
       .level("error")
-      .category("callback::Error")
+      .category("callback::error")
       .description("Missing GitHub oauth state, code or stored state")
       .flush();
 
@@ -35,7 +35,7 @@ export default defineEventHandler(async function callback(event) {
   if (storedState !== state) {
     logger
       .level("error")
-      .category("callback::Error")
+      .category("callback::error")
       .description("Stored state is different from the one received")
       .flush();
 
@@ -51,7 +51,7 @@ export default defineEventHandler(async function callback(event) {
   } catch (e) {
     logger
       .level("error")
-      .category("callback::Error")
+      .category("callback::validateAuthorizationCode")
       .description("Error validating GitHub authorization code")
       .add("error", e)
       .flush();
@@ -62,21 +62,17 @@ export default defineEventHandler(async function callback(event) {
   }
 
   let githubUserResult: GitHubUserResponse;
+  const githubAccessToken = tokens.accessToken();
 
   try {
-    const githubAccessToken = tokens.accessToken();
-    const userRequest = new Request("https://api.github.com/user");
+    const userResponse = await fetch("https://api.github.com/user", {
+      headers: {
+        Authorization: `Bearer ${githubAccessToken}`,
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    });
 
-    console.log("githubAccessToken", githubAccessToken);
-
-    userRequest.headers.set(
-      "Authorization",
-      `Bearer ${githubAccessToken}`,
-    );
-    userRequest.headers.set("Accept", "application/vnd.github+json");
-    userRequest.headers.set("X-GitHub-Api-Version", "2022-11-28");
-
-    const userResponse = await fetch(userRequest);
     githubUserResult = await userResponse.json();
   } catch (e) {
     logger
@@ -97,10 +93,16 @@ export default defineEventHandler(async function callback(event) {
 
   try {
     guest = await guestService.getByProviderId(githubGuestId.toString());
+
+    logger
+      .level("debug")
+      .category("callback::guestRetrieved")
+      .description(`Guest retried: ${JSON.stringify(guest)}`)
+      .flush();
   } catch (e) {
     logger
       .level("error")
-      .category("callback::Error")
+      .category("callback::getByProviderId")
       .description(`Error getting guest by provider id ${githubGuestId}`)
       .add("error", e)
       .flush();
@@ -115,10 +117,16 @@ export default defineEventHandler(async function callback(event) {
   if (guest !== null) {
     try {
       await sessionService.createSession(guest.id);
+
+      logger
+        .level("debug")
+        .category("callback::sessionCreated")
+        .description(`Session created for guest: ${guest.id}`)
+        .flush();
     } catch (e) {
       logger
         .level("error")
-        .category("callback::Error")
+        .category("callback::createSession")
         .description("Error creating session for existing guest")
         .add("error", e)
         .flush();
@@ -137,10 +145,17 @@ export default defineEventHandler(async function callback(event) {
       name: githubGuestName,
       providerId: githubGuestId.toString(),
     });
+
+    logger
+      .level("debug")
+      .category("callback::guestCreated")
+      .description(`Guest created successfully`)
+      .add("guest", guest)
+      .flush();
   } catch (e) {
     logger
       .level("error")
-      .category("callback::Error")
+      .category("callback::createGuest")
       .description("Error creating guest")
       .add("error", e)
       .flush();
@@ -152,10 +167,16 @@ export default defineEventHandler(async function callback(event) {
 
   try {
     await sessionService.createSession(guest.id);
+
+    logger
+      .level("debug")
+      .category("callback::sessionCreated")
+      .description(`Session created for guest: ${guest.id}`)
+      .flush();
   } catch (e) {
     logger
       .level("error")
-      .category("callback::Error")
+      .category("callback::createSession")
       .description("Error creating session for a new guest")
       .add("error", e)
       .flush();

@@ -58,7 +58,7 @@ export default defineEventHandler(async function callback(event) {
   } catch (e) {
     logger
       .level("error")
-      .category("callback::Error")
+      .category("callback::validateAuthorizationCode")
       .description("Error validating Google authorization code")
       .add("error", e)
       .flush();
@@ -82,7 +82,7 @@ export default defineEventHandler(async function callback(event) {
   } catch (e) {
     logger
       .level("error")
-      .category("callback::Error")
+      .category("callback::getByProviderId")
       .description(`Error getting guest by provider id ${googleGuestId}`)
       .add("error", e)
       .flush();
@@ -97,10 +97,16 @@ export default defineEventHandler(async function callback(event) {
   if (guest !== null) {
     try {
       await sessionService.createSession(guest.id);
+
+      logger
+        .level("debug")
+        .category("callback::sessionCreated")
+        .description(`Session created for guest: ${guest.id}`)
+        .flush();
     } catch (e) {
       logger
         .level("error")
-        .category("callback::Error")
+        .category("callback::createSession")
         .description("Error creating session for existing guest")
         .add("error", e)
         .flush();
@@ -119,6 +125,13 @@ export default defineEventHandler(async function callback(event) {
       name: googleGuestName,
       providerId: googleGuestId,
     });
+
+    logger
+      .level("debug")
+      .category("callback::guestCreated")
+      .description(`Guest created successfully`)
+      .add("guest", guest)
+      .flush();
   } catch (e) {
     logger
       .level("error")
@@ -134,6 +147,12 @@ export default defineEventHandler(async function callback(event) {
 
   try {
     await sessionService.createSession(guest.id);
+
+    logger
+      .level("debug")
+      .category("callback::sessionCreated")
+      .description(`Session created for guest: ${guest.id}`)
+      .flush();
   } catch (e) {
     logger
       .level("error")
