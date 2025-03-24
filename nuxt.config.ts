@@ -1,7 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import dotenv from "dotenv";
 import { createResolver } from "@nuxt/kit";
 
 const { resolve } = createResolver(import.meta.url);
+
+dotenv.config();
 
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
