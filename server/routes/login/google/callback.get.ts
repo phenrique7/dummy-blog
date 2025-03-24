@@ -79,6 +79,12 @@ export default defineEventHandler(async function callback(event) {
 
   try {
     guest = await guestService.getByProviderId(googleGuestId);
+
+    logger
+      .level("debug")
+      .category("callback::guestRetrieved")
+      .description(`Guest retried: ${JSON.stringify(guest)}`)
+      .flush();
   } catch (e) {
     logger
       .level("error")
@@ -135,7 +141,7 @@ export default defineEventHandler(async function callback(event) {
   } catch (e) {
     logger
       .level("error")
-      .category("callback::Error")
+      .category("callback::createGuest")
       .description("Error creating guest")
       .add("error", e)
       .flush();
@@ -156,7 +162,7 @@ export default defineEventHandler(async function callback(event) {
   } catch (e) {
     logger
       .level("error")
-      .category("callback::Error")
+      .category("callback::createSession")
       .description("Error creating session for new guest")
       .add("error", e)
       .flush();

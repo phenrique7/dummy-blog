@@ -77,7 +77,7 @@ export default defineEventHandler(async function callback(event) {
   } catch (e) {
     logger
       .level("error")
-      .category("callback::Error")
+      .category("callback::fetch")
       .description("Error getting GitHub user info")
       .add("error", e)
       .flush();

@@ -17,7 +17,7 @@ export class GuestRepository extends BaseRepository {
   public async create(guest: CreateGuestDTO): Promise<GuestDDB> {
     const stmt = this.db
       .prepare(
-        "INSERT INTO sessions (name, provider, provider_id, created_at) VALUES (?1, ?2, ?3)",
+        "INSERT INTO guests (name, provider, provider_id, created_at) VALUES (?1, ?2, ?3, ?4)",
       )
       .bind(
         guest.name,
