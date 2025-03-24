@@ -2,6 +2,7 @@ import type { OAuth2Tokens } from "arctic";
 import { github } from "~/lib/config/oauth";
 import { Logger } from "~/lib/common/logger/logger";
 import { GITHUB_OAUTH_STATE } from "~/constants/app";
+import type { GuestDTO } from "~/services/guest/dto/guest.dto";
 import { GuestService } from "~/services/guest/service/guest.service";
 import { SessionService } from "~/services/session/service/session.service";
 
@@ -30,6 +31,7 @@ export default defineEventHandler(async function callback(event) {
       status: 400,
     });
   }
+
   if (storedState !== state) {
     logger
       .level("error")
@@ -63,12 +65,17 @@ export default defineEventHandler(async function callback(event) {
 
   try {
     const githubAccessToken = tokens.accessToken();
-
     const userRequest = new Request("https://api.github.com/user");
+
+    console.log("githubAccessToken", githubAccessToken);
+
     userRequest.headers.set(
       "Authorization",
       `Bearer ${githubAccessToken}`,
     );
+    userRequest.headers.set("Accept", "application/vnd.github+json");
+    userRequest.headers.set("X-GitHub-Api-Version", "2022-11-28");
+
     const userResponse = await fetch(userRequest);
     githubUserResult = await userResponse.json();
   } catch (e) {
@@ -84,25 +91,79 @@ export default defineEventHandler(async function callback(event) {
     });
   }
 
+  let guest: GuestDTO | null;
   const githubGuestId = githubUserResult.id;
   const githubGuestName = githubUserResult.name;
 
-  let guest = await guestService.getByProviderId(githubGuestId.toString());
+  try {
+    guest = await guestService.getByProviderId(githubGuestId.toString());
+  } catch (e) {
+    logger
+      .level("error")
+      .category("callback::Error")
+      .description(`Error getting guest by provider id ${githubGuestId}`)
+      .add("error", e)
+      .flush();
+
+    return new Response("Please, restart the process.", {
+      status: 400,
+    });
+  }
 
   const goTo = state.split("?redirectUrl=")[1];
 
   if (guest !== null) {
-    await sessionService.createSession(guest.id);
+    try {
+      await sessionService.createSession(guest.id);
+    } catch (e) {
+      logger
+        .level("error")
+        .category("callback::Error")
+        .description("Error creating session for existing guest")
+        .add("error", e)
+        .flush();
+
+      return new Response("Please, restart the process.", {
+        status: 400,
+      });
+    }
+
     return sendRedirect(event, goTo);
   }
 
-  guest = await guestService.createGuest({
-    provider: "github",
-    name: githubGuestName,
-    providerId: githubGuestId.toString(),
-  });
+  try {
+    guest = await guestService.createGuest({
+      provider: "github",
+      name: githubGuestName,
+      providerId: githubGuestId.toString(),
+    });
+  } catch (e) {
+    logger
+      .level("error")
+      .category("callback::Error")
+      .description("Error creating guest")
+      .add("error", e)
+      .flush();
 
-  await sessionService.createSession(guest.id);
+    return new Response("Please, restart the process.", {
+      status: 400,
+    });
+  }
+
+  try {
+    await sessionService.createSession(guest.id);
+  } catch (e) {
+    logger
+      .level("error")
+      .category("callback::Error")
+      .description("Error creating session for a new guest")
+      .add("error", e)
+      .flush();
+
+    return new Response("Please, restart the process.", {
+      status: 400,
+    });
+  }
 
   return sendRedirect(event, goTo);
 });

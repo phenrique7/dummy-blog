@@ -1,6 +1,7 @@
 import { decodeIdToken, type OAuth2Tokens } from "arctic";
 import { google } from "~/lib/config/oauth";
 import { Logger } from "~/lib/common/logger/logger";
+import type { GuestDTO } from "~/services/guest/dto/guest.dto";
 import { GuestService } from "~/services/guest/service/guest.service";
 import { GOOGLE_OAUTH_STATE, GOOGLE_CODE_VERIFIER } from "~/constants/app";
 import { SessionService } from "~/services/session/service/session.service";
@@ -34,6 +35,7 @@ export default defineEventHandler(async function callback(event) {
       status: 400,
     });
   }
+
   if (storedState !== state) {
     logger
       .level("error")
@@ -70,25 +72,80 @@ export default defineEventHandler(async function callback(event) {
     sub: string;
     name: string;
   };
+
+  let guest: GuestDTO | null;
   const googleGuestId = claims.sub;
   const googleGuestName = claims.name;
 
-  let guest = await guestService.getByProviderId(googleGuestId);
+  try {
+    guest = await guestService.getByProviderId(googleGuestId);
+  } catch (e) {
+    logger
+      .level("error")
+      .category("callback::Error")
+      .description(`Error getting guest by provider id ${googleGuestId}`)
+      .add("error", e)
+      .flush();
+
+    return new Response("Please, restart the process.", {
+      status: 400,
+    });
+  }
 
   const goTo = state.split("?redirectUrl=")[1];
 
   if (guest !== null) {
-    await sessionService.createSession(guest.id);
+    try {
+      await sessionService.createSession(guest.id);
+    } catch (e) {
+      logger
+        .level("error")
+        .category("callback::Error")
+        .description("Error creating session for existing guest")
+        .add("error", e)
+        .flush();
+
+      return new Response("Please, restart the process.", {
+        status: 400,
+      });
+    }
+
     return sendRedirect(event, goTo);
   }
 
-  guest = await guestService.createGuest({
-    provider: "google",
-    name: googleGuestName,
-    providerId: googleGuestId,
-  });
+  try {
+    guest = await guestService.createGuest({
+      provider: "google",
+      name: googleGuestName,
+      providerId: googleGuestId,
+    });
+  } catch (e) {
+    logger
+      .level("error")
+      .category("callback::Error")
+      .description("Error creating guest")
+      .add("error", e)
+      .flush();
 
-  await sessionService.createSession(guest.id);
+    return new Response("Please, restart the process.", {
+      status: 400,
+    });
+  }
+
+  try {
+    await sessionService.createSession(guest.id);
+  } catch (e) {
+    logger
+      .level("error")
+      .category("callback::Error")
+      .description("Error creating session for new guest")
+      .add("error", e)
+      .flush();
+
+    return new Response("Please, restart the process.", {
+      status: 400,
+    });
+  }
 
   return sendRedirect(event, goTo);
 });
