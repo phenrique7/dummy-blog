@@ -1,7 +1,6 @@
 import type { EventHandlerRequest, H3Event } from "h3";
 import { PROD } from "~/constants/envs";
 import { Logger } from "~/lib/common/logger/logger";
-import { AUTH_SESSION_NAME } from "~/constants/app";
 import { sessionConfig, type SessionData } from "~/lib/config/session";
 import { GuestRepository } from "~/services/session/repository/session.repository";
 
@@ -40,7 +39,6 @@ export class SessionService {
 
       const cookieSession = await useSession<SessionData>(this.event, {
         ...sessionConfig,
-        name: AUTH_SESSION_NAME,
         maxAge,
         cookie: {
           path: "/",
@@ -147,5 +145,18 @@ export class SessionService {
       .flush();
 
     await this.sessionRepository.delete(sessionId);
+
+    const session = await useSession<SessionData>(
+      this.event,
+      sessionConfig,
+    );
+
+    await session.clear();
+
+    this.logger
+      .level("debug")
+      .category("invalidateSession::Result")
+      .description(`Session invalidated for guest ${session.data.guestId}`)
+      .flush();
   }
 }

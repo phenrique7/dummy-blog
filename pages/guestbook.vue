@@ -5,6 +5,7 @@ import GoogleIcon from "~/ui/icons/google-icon.vue";
 import GitHubIcon from "~/ui/icons/github-icon.vue";
 import Input from "~/ui/components/input/input.vue";
 import Button from "~/ui/components/button/button.vue";
+import Spinner from "~/ui/components/spinner/spinner.vue";
 
 useSeoMeta({
   title: "Guestbook − Alexander Maxwell",
@@ -15,19 +16,27 @@ useSeoMeta({
   twitterCard: "summary_large_image",
 });
 
-const signText = ref("");
 const route = useRoute();
+const signText = ref("");
 
-const { data } = await useFetch<{ logged: boolean }>("/api/session");
+const checkSessionQuery = await useFetch<{ logged: boolean }>(
+  "/api/session",
+);
 
-const logged = data.value?.logged;
+const deleteSessionQuery = await useFetch("/api/session", {
+  method: "DELETE",
+  immediate: false,
+});
 
-function onGoogleSignIn() {
-  window.location.href = `/login/google?redirectUrl=${route.path}`;
+const logged = checkSessionQuery.data.value?.logged;
+
+function onSignIn(provider: "google" | "github") {
+  window.location.href = `/login/${provider}?redirectUrl=${route.path}`;
 }
 
-function onGithubSignIn() {
-  window.location.href = `/login/github?redirectUrl=${route.path}`;
+async function onSignOut() {
+  await deleteSessionQuery.execute();
+  await checkSessionQuery.refresh();
 }
 </script>
 
@@ -67,13 +76,13 @@ function onGithubSignIn() {
         })
       "
     >
-      <Button variant="oauth" @click="onGoogleSignIn">
+      <Button variant="oauth" @click="onSignIn('google')">
         <template v-slot:icon>
           <GoogleIcon />
         </template>
         Sign in with Google
       </Button>
-      <Button variant="oauth" @click="onGithubSignIn">
+      <Button variant="oauth" @click="onSignIn('github')">
         <template v-slot:icon>
           <GitHubIcon :class="css({ fill: 'text_main' })" />
         </template>
@@ -112,8 +121,16 @@ function onGithubSignIn() {
           </button>
         </template>
       </Input>
-      <div :class="css({ w: '4.5rem' })">
-        <Button size="sm" variant="ghost"> Sign out </Button>
+      <div :class="css({ w: '4.5rem', '& div': { ml: 1 } })">
+        <Button
+          size="sm"
+          variant="ghost"
+          @click="onSignOut"
+          :disabled="deleteSessionQuery.status === 'pending'"
+        >
+          Sign out
+          <Spinner v-if="deleteSessionQuery.status === 'pending'" />
+        </Button>
       </div>
     </div>
   </div>

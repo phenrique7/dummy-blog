@@ -21,7 +21,7 @@ export abstract class BaseHandler {
    * @param options If validate option is true, validates session, otherwise returns session without validation. Default: false
    * @returns session
    */
-  protected async getSession(
+  private async getSession(
     options = { validate: false },
   ): Promise<SessionData> {
     const session = await useSession<SessionData>(

@@ -4,6 +4,7 @@ export function useDisplayPreferences() {
     display: "list" | "grid";
   }>("__display-preferences__", {
     default: () => ({ theme: "dark", display: "list" }),
+    sameSite: "lax",
   });
 
   function setPreferredDisplay() {
