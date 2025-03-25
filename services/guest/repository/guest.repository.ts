@@ -11,13 +11,13 @@ export class GuestRepository extends BaseRepository {
   }
 
   /**
-   * Create a session in the database
+   * Create a guest in the database
    * @param guest
    */
   public async create(guest: CreateGuestDTO): Promise<GuestDDB> {
     const stmt = this.db
       .prepare(
-        "INSERT INTO guests (name, provider, provider_id, created_at) VALUES (?1, ?2, ?3, ?4)",
+        "INSERT INTO guests (name, provider, provider_id, created_at) VALUES (?1, ?2, ?3, ?4) RETURNING id, name, provider, provider_id, created_at",
       )
       .bind(
         guest.name,

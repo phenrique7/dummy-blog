@@ -73,6 +73,8 @@ export default defineEventHandler(async function callback(event) {
       },
     });
 
+    console.log("userResponseeeeeeee", userResponse);
+
     githubUserResult = await userResponse.json();
   } catch (e) {
     logger

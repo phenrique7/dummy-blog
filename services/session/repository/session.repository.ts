@@ -29,7 +29,7 @@ export class GuestRepository extends BaseRepository {
   public async create(session: CreateSessionDTO): Promise<SessionDDB> {
     const stmt = this.db
       .prepare(
-        "INSERT INTO sessions (guest_id, expires_at, created_at) VALUES (?1, ?2, ?3)",
+        "INSERT INTO sessions (guest_id, expires_at, created_at) VALUES (?1, ?2, ?3) RETURNING id, guest_id, expires_at, created_at",
       )
       .bind(
         session.guestId,
@@ -52,7 +52,9 @@ export class GuestRepository extends BaseRepository {
     updateSession: UpdateSessionDTO,
   ): Promise<SessionDDB | null> {
     const stmt = this.db
-      .prepare("UPDATE sessions SET expires_at = ?2 WHERE id = ?1")
+      .prepare(
+        "UPDATE sessions SET expires_at = ?2 WHERE id = ?1 RETURNING id, guest_id, expires_at, created_at",
+      )
       .bind(sessionId, updateSession.expiresAt);
 
     return stmt.first<SessionDDB>();
