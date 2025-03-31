@@ -21,11 +21,15 @@ const signText = ref("");
 
 const checkSessionQuery = await useFetch<{ logged: boolean }>(
   "/api/session",
+  {
+    key: "__fk_check-session__",
+  },
 );
 
 const deleteSessionQuery = await useFetch("/api/session", {
   method: "DELETE",
   immediate: false,
+  key: "__fk_delete-session__",
 });
 
 const logged = checkSessionQuery.data.value?.logged;
@@ -126,10 +130,10 @@ async function onSignOut() {
           size="sm"
           variant="ghost"
           @click="onSignOut"
-          :disabled="deleteSessionQuery.status === 'pending'"
+          :disabled="deleteSessionQuery.status.value === 'pending'"
         >
           Sign out
-          <Spinner v-if="deleteSessionQuery.status === 'pending'" />
+          <Spinner v-if="deleteSessionQuery.status.value === 'pending'" />
         </Button>
       </div>
     </div>
