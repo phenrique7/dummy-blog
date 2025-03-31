@@ -61,21 +61,29 @@ export default defineEventHandler(async function callback(event) {
     });
   }
 
-  let githubUserResult: GitHubUserResponse;
-  const githubAccessToken = tokens.accessToken();
+  let githubGuestId: number;
+  let githubGuestName: string;
 
   try {
-    const userResponse = await fetch("https://api.github.com/user", {
+    const githubAccessToken = tokens.accessToken();
+
+    const githubUserResult = (await $fetch("https://api.github.com/user", {
       headers: {
         Authorization: `Bearer ${githubAccessToken}`,
         Accept: "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
       },
-    });
+    })) as GitHubUserResponse;
 
-    console.log("userResponseeeeeeee", userResponse);
+    githubGuestId = githubUserResult.id;
+    githubGuestName = githubUserResult.name;
 
-    githubUserResult = await userResponse.json();
+    logger
+      .level("debug")
+      .category("callback::fetch")
+      .description("GitHub user info retrieved successfully")
+      .add("githubUserResult", githubUserResult)
+      .flush();
   } catch (e) {
     logger
       .level("error")
@@ -90,8 +98,6 @@ export default defineEventHandler(async function callback(event) {
   }
 
   let guest: GuestDTO | null;
-  const githubGuestId = githubUserResult.id;
-  const githubGuestName = githubUserResult.name;
 
   try {
     guest = await guestService.getByProviderId(githubGuestId.toString());
