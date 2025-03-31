@@ -32,7 +32,12 @@ const deleteSessionQuery = await useFetch("/api/session", {
   key: "__fk_delete-session__",
 });
 
-const logged = checkSessionQuery.data.value?.logged;
+const logged = computed(() => checkSessionQuery.data.value?.logged);
+const loggingOut = computed(
+  () =>
+    deleteSessionQuery.status.value === "pending" ||
+    checkSessionQuery.status.value === "pending",
+);
 
 function onSignIn(provider: "google" | "github") {
   window.location.href = `/login/${provider}?redirectUrl=${route.path}`;
@@ -130,10 +135,10 @@ async function onSignOut() {
           size="sm"
           variant="ghost"
           @click="onSignOut"
-          :disabled="deleteSessionQuery.status.value === 'pending'"
+          :disabled="loggingOut"
         >
           Sign out
-          <Spinner v-if="deleteSessionQuery.status.value === 'pending'" />
+          <Spinner v-if="loggingOut" />
         </Button>
       </div>
     </div>
