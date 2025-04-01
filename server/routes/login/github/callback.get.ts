@@ -67,6 +67,8 @@ export default defineEventHandler(async function callback(event) {
   try {
     const githubAccessToken = tokens.accessToken();
 
+    console.log("githubAccessToken", githubAccessToken);
+
     const githubUserResult = (await $fetch("https://api.github.com/user", {
       headers: {
         Authorization: `Bearer ${githubAccessToken}`,
@@ -74,6 +76,8 @@ export default defineEventHandler(async function callback(event) {
         "X-GitHub-Api-Version": "2022-11-28",
       },
     })) as GitHubUserResponse;
+
+    console.log("githubUserResult", githubUserResult);
 
     githubGuestId = githubUserResult.id;
     githubGuestName = githubUserResult.name;
@@ -90,6 +94,7 @@ export default defineEventHandler(async function callback(event) {
       .category("callback::fetch")
       .description("Error getting GitHub user info")
       .add("error", e)
+      .add("error.data", (e as { data: unknown }).data)
       .flush();
 
     return new Response("Please, restart the process.", {
