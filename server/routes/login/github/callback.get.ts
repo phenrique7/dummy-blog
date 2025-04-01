@@ -67,17 +67,14 @@ export default defineEventHandler(async function callback(event) {
   try {
     const githubAccessToken = tokens.accessToken();
 
-    console.log("githubAccessToken", githubAccessToken);
-
     const githubUserResult = (await $fetch("https://api.github.com/user", {
       headers: {
         Authorization: `Bearer ${githubAccessToken}`,
         Accept: "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "phenrique7",
       },
     })) as GitHubUserResponse;
-
-    console.log("githubUserResult", githubUserResult);
 
     githubGuestId = githubUserResult.id;
     githubGuestName = githubUserResult.name;
