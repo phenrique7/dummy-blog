@@ -36,13 +36,8 @@ export class GuestbookPostsHandler extends BaseHandler {
    * @returns All guestbook posts
    */
   public getPosts() {
-    return this.handleRequest(
-      async () => {
-        return new GuestbookPostsService().getAll();
-      },
-      {
-        validateSession: true,
-      },
-    );
+    return this.handleRequest(async () => {
+      return new GuestbookPostsService().getAll();
+    });
   }
 }

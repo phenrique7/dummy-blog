@@ -21,7 +21,6 @@ const route = useRoute();
 const signText = ref("");
 const loggingOut = ref(false);
 const postingMessage = ref(false);
-const guestbookPosts = ref<GuestbookPostResponse[]>([]);
 
 const checkSessionQuery = await useFetch<{ logged: boolean }>(
   "/api/session",
@@ -35,26 +34,12 @@ const logged = computed(() => checkSessionQuery.data.value?.logged);
 const guestbookPostsQuery = await useFetch<GuestbookPostResponse[]>(
   "/api/guestbook-posts",
   {
-    immediate: false,
     key: "__fk_guestbook-posts__",
-    onResponse({ response }) {
-      if (response.status === 200) {
-        guestbookPosts.value = response._data ?? [];
-      }
-    },
   },
 );
 
-watch(
-  logged,
-  async (logged) => {
-    if (logged) {
-      await guestbookPostsQuery.execute();
-    }
-  },
-  {
-    immediate: true,
-  },
+const guestbookPosts = computed(
+  () => guestbookPostsQuery.data.value ?? [],
 );
 
 function onSignIn(provider: "google" | "github") {
@@ -198,7 +183,7 @@ async function onSignText() {
     </div>
     <ul
       v-if="guestbookPosts.length > 0"
-      :class="vstack({ mt: 6, alignItems: 'stretch', gap: 4 })"
+      :class="vstack({ mt: 12, alignItems: 'stretch', gap: 4 })"
     >
       <li v-for="post in guestbookPosts" :key="post.id">
         <p :class="css({ color: 'text_main' })">
