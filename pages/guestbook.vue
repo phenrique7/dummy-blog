@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { css } from "styled-system/css";
-import { container, hstack } from "styled-system/patterns";
+import { container, hstack, vstack } from "styled-system/patterns";
 import GoogleIcon from "~/ui/icons/google-icon.vue";
 import GitHubIcon from "~/ui/icons/github-icon.vue";
 import Input from "~/ui/components/input/input.vue";
@@ -19,8 +19,9 @@ useSeoMeta({
 
 const route = useRoute();
 const signText = ref("");
+const loggingOut = ref(false);
 const postingMessage = ref(false);
-const messages = ref<GuestbookPostResponse[]>([]);
+const guestbookPosts = ref<GuestbookPostResponse[]>([]);
 
 const checkSessionQuery = await useFetch<{ logged: boolean }>(
   "/api/session",
@@ -38,7 +39,7 @@ const guestbookPostsQuery = await useFetch<GuestbookPostResponse[]>(
     key: "__fk_guestbook-posts__",
     onResponse({ response }) {
       if (response.status === 200) {
-        messages.value = response._data ?? [];
+        guestbookPosts.value = response._data ?? [];
       }
     },
   },
@@ -56,34 +57,29 @@ watch(
   },
 );
 
-const deleteSessionQuery = await useFetch("/api/session", {
-  method: "DELETE",
-  immediate: false,
-  key: "__fk_delete-session__",
-});
-
-const loggingOut = computed(
-  () =>
-    deleteSessionQuery.status.value === "pending" ||
-    checkSessionQuery.status.value === "pending",
-);
-
 function onSignIn(provider: "google" | "github") {
   window.location.href = `/login/${provider}?redirectUrl=${route.path}`;
 }
 
 async function onSignOut() {
-  await deleteSessionQuery.execute();
+  loggingOut.value = true;
+
+  await $fetch("/api/session", {
+    method: "DELETE",
+    cache: "no-cache",
+  });
+
+  loggingOut.value = false;
+
   await checkSessionQuery.refresh();
 }
 
 async function onSignText() {
-  if (signText.value) {
+  if (signText.value.trim() !== "") {
     postingMessage.value = true;
 
     await $fetch("/api/guestbook-posts", {
       method: "POST",
-      immediate: false,
       cache: "no-cache",
       body: {
         message: signText.value,
@@ -163,7 +159,7 @@ async function onSignText() {
         <template v-slot:right-element>
           <button
             @click="onSignText"
-            :disabled="signText.trim() === '' || postingMessage"
+            :disabled="postingMessage"
             :class="
               css({
                 pr: 3,
@@ -199,6 +195,16 @@ async function onSignText() {
         </Button>
         <Spinner v-if="loggingOut" />
       </div>
+      <ul :class="vstack({ mt: 6, alignItems: 'stretch', gap: 4 })">
+        <li v-for="post in guestbookPosts" :key="post.id">
+          <p :class="css({ color: 'text_main' })">
+            <span :class="css({ color: 'text_muted' })">
+              {{ post.guestName }}:
+            </span>
+            {{ post.message }}
+          </p>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
