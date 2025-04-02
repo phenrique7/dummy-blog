@@ -6,9 +6,9 @@ import { BaseException } from "~/lib/common/exception/base.exception";
 export class BadRequestException extends BaseException {
   /**
    * Builds a new BadRequestException
-   * @param errors - Zod validation errors
+   * @param errorMessage - Error message to be displayed
    */
-  constructor(errors: unknown) {
-    super(400, "Bad request", errors);
+  constructor(errorMessage: string) {
+    super(400, "Bad request", errorMessage);
   }
 }

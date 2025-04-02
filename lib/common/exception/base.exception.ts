@@ -1,9 +1,10 @@
 export type BaseExceptionError = {
   status: "error";
   statusCode: number;
+  statusMessage: string;
   error: {
     message: string;
-    errors?: unknown;
+    errors?: string;
   };
 };
 
@@ -14,17 +15,15 @@ export class BaseException extends Error {
   /**
    * Create a new Base API Exception
    * @param statusCode HTTP status code that will be returned in API calls
+   * @param statusMessage Status error message
    * @param errorMessage Error message
-   * @param errors Error cause/stack
    */
   constructor(
     private statusCode: number,
+    private statusMessage: string,
     private errorMessage: string,
-    private errors?: unknown,
   ) {
-    super(errorMessage, {
-      cause: errors,
-    });
+    super(statusMessage);
   }
 
   /**
@@ -35,9 +34,10 @@ export class BaseException extends Error {
     return {
       status: "error",
       statusCode: this.statusCode,
+      statusMessage: this.statusMessage,
       error: {
         message: this.errorMessage,
-        errors: this.errors,
+        errors: this.stack,
       },
     };
   }
@@ -55,8 +55,9 @@ export class BaseException extends Error {
     return {
       status: "error",
       statusCode: 500,
+      statusMessage: "Internal Server Error",
       error: {
-        message: exception.message,
+        message: exception.errorMessage,
         errors: exception.stack,
       },
     };
