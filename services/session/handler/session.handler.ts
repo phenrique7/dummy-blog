@@ -6,15 +6,12 @@ import { SessionService } from "~/services/session/service/session.service";
  * Session main handler. This class exports all session related operations.
  */
 export class SessionHandler extends BaseHandler {
-  private readonly sessionService: SessionService;
-
   /**
    * Builds a new SessionHandler instance
    * @param event H3 event
    */
   constructor(event: H3Event<EventHandlerRequest>) {
     super(event);
-    this.sessionService = new SessionService(event);
   }
 
   /**
@@ -36,7 +33,9 @@ export class SessionHandler extends BaseHandler {
    */
   public deleteSession() {
     return this.handleRequest(async ({ session }) => {
-      await this.sessionService.invalidateSession(session.sessionId);
+      await new SessionService(this.event).invalidateSession(
+        session.sessionId,
+      );
     });
   }
 }

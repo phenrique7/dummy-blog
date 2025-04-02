@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { buttonSva } from "~/ui/components/button/button.sva.ts";
+import { buttonSva } from "~/ui/components/button/button.sva";
 
 const props = defineProps<{
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   variant?: "solid" | "ghost" | "oauth";
 }>();
 

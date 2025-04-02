@@ -1,9 +1,10 @@
-import { z } from "zod";
+import { z, type ZodSchema } from "zod";
 import type { EventHandlerRequest, H3Event } from "h3";
 import { Logger } from "~/lib/common/logger/logger";
 import { Parser } from "~/lib/common/parser/parser";
 import { BaseException } from "~/lib/common/exception/base.exception";
 import { sessionConfig, type SessionData } from "~/lib/config/session";
+import { SessionService } from "~/services/session/service/session.service";
 import { UnauthorizedException } from "~/lib/common/exception/unauthorized.exception";
 
 /**
@@ -17,9 +18,9 @@ export abstract class BaseHandler {
   }
 
   /**
-   * Validates user session
+   * Validates user session and returns session data
    * @param options If validate option is true, validates session, otherwise returns session without validation. Default: false
-   * @returns session
+   * @returns session Session data
    */
   private async getSession(
     options = { validate: false },
@@ -29,8 +30,18 @@ export abstract class BaseHandler {
       sessionConfig,
     );
 
-    if (options.validate && !session.data) {
-      throw new UnauthorizedException("Guest not logged in");
+    if (options.validate) {
+      if (Object.values(session.data).length === 0) {
+        throw new UnauthorizedException("Guest not logged in");
+      }
+
+      const isValid = await new SessionService(this.event).validateSession(
+        session.data,
+      );
+
+      if (!isValid) {
+        throw new UnauthorizedException("Invalid or expired session");
+      }
     }
 
     return session.data;
@@ -45,23 +56,25 @@ export abstract class BaseHandler {
    */
   protected async handleRequest<T>(
     handler: (args: {
-      body: unknown | null;
+      body: any;
       query: any;
       session: SessionData;
     }) => Promise<T>,
-    options = { session: false, schema: z.object({}) },
+    options: Partial<{ validateSession: boolean; schema: ZodSchema }> = {},
   ) {
+    const { validateSession = false, schema = z.object({}) } = options;
+
     try {
       let body = null;
       const query = getQuery(this.event);
 
       if (this.event.method === "POST" || this.event.method === "PUT") {
         body = await readValidatedBody(this.event, (body) =>
-          new Parser(options.schema).parseBody(body),
+          new Parser(schema).parseBody(body),
         );
       }
 
-      const session = await this.getSession({ validate: options.session });
+      const session = await this.getSession({ validate: validateSession });
       const data = await handler({ body, query, session });
 
       return data ?? { message: "Ok" };
@@ -74,14 +87,16 @@ export abstract class BaseHandler {
           .category("BaseHandler::error")
           .description(exception.message)
           .add("statusCode", response.statusCode)
-          .add("errorName", exception.name)
+          .add("statusMessage", response.statusMessage)
           .add("stack", exception.stack)
           .flush();
       }
 
       throw createError({
         statusCode: response.statusCode,
-        statusMessage: response.error.message,
+        statusMessage: response.statusMessage,
+        message: response.error.message,
+        stack: response.error.errors,
       });
     }
   }

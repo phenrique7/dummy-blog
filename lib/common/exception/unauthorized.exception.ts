@@ -6,9 +6,9 @@ import { BaseException } from "~/lib/common/exception/base.exception";
 export class UnauthorizedException extends BaseException {
   /**
    * Builds a new UnauthorizedException
-   * @param error - Unauthorized error
+   * @param errorMessage - Unauthorized error
    */
-  constructor(error: unknown) {
-    super(401, "Unauthorized", error);
+  constructor(errorMessage: string) {
+    super(401, "Unauthorized", errorMessage);
   }
 }

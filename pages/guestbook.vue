@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { css } from "styled-system/css";
-import { container, hstack } from "styled-system/patterns";
+import { container, hstack, vstack } from "styled-system/patterns";
 import GoogleIcon from "~/ui/icons/google-icon.vue";
 import GitHubIcon from "~/ui/icons/github-icon.vue";
 import Input from "~/ui/components/input/input.vue";
 import Button from "~/ui/components/button/button.vue";
 import Spinner from "~/ui/components/spinner/spinner.vue";
+import type { GuestbookPostResponse } from "~/services/guestbook-posts/dto/dto";
 
 useSeoMeta({
   title: "Guestbook − Alexander Maxwell",
@@ -18,6 +19,9 @@ useSeoMeta({
 
 const route = useRoute();
 const signText = ref("");
+const loggingOut = ref(false);
+const postingMessage = ref(false);
+const guestbookPosts = ref<GuestbookPostResponse[]>([]);
 
 const checkSessionQuery = await useFetch<{ logged: boolean }>(
   "/api/session",
@@ -26,17 +30,31 @@ const checkSessionQuery = await useFetch<{ logged: boolean }>(
   },
 );
 
-const deleteSessionQuery = await useFetch("/api/session", {
-  method: "DELETE",
-  immediate: false,
-  key: "__fk_delete-session__",
-});
-
 const logged = computed(() => checkSessionQuery.data.value?.logged);
-const loggingOut = computed(
-  () =>
-    deleteSessionQuery.status.value === "pending" ||
-    checkSessionQuery.status.value === "pending",
+
+const guestbookPostsQuery = await useFetch<GuestbookPostResponse[]>(
+  "/api/guestbook-posts",
+  {
+    immediate: false,
+    key: "__fk_guestbook-posts__",
+    onResponse({ response }) {
+      if (response.status === 200) {
+        guestbookPosts.value = response._data ?? [];
+      }
+    },
+  },
+);
+
+watch(
+  logged,
+  async (logged) => {
+    if (logged) {
+      await guestbookPostsQuery.execute();
+    }
+  },
+  {
+    immediate: true,
+  },
 );
 
 function onSignIn(provider: "google" | "github") {
@@ -44,8 +62,39 @@ function onSignIn(provider: "google" | "github") {
 }
 
 async function onSignOut() {
-  await deleteSessionQuery.execute();
+  loggingOut.value = true;
+
+  await $fetch("/api/session", {
+    method: "DELETE",
+    cache: "no-cache",
+  });
+
+  loggingOut.value = false;
+
   await checkSessionQuery.refresh();
+}
+
+async function onSignText() {
+  if (signText.value.trim() !== "") {
+    postingMessage.value = true;
+
+    await $fetch("/api/guestbook-posts", {
+      method: "POST",
+      cache: "no-cache",
+      body: {
+        message: signText.value,
+      },
+      onResponse({ response }) {
+        if (response.status === 201) {
+          signText.value = "";
+        }
+      },
+    });
+
+    postingMessage.value = false;
+
+    await guestbookPostsQuery.refresh();
+  }
 }
 </script>
 
@@ -109,9 +158,13 @@ async function onSignOut() {
       >
         <template v-slot:right-element>
           <button
+            @click="onSignText"
+            :disabled="postingMessage"
             :class="
               css({
-                padding: 3,
+                pr: 3,
+                py: 2.5,
+                pl: 2.5,
                 fontSize: 'xs',
                 color: 'text_main',
                 position: 'relative',
@@ -126,21 +179,32 @@ async function onSignOut() {
               })
             "
           >
-            Sign
+            <template v-if="!postingMessage">Sign</template>
+            <Spinner v-else />
           </button>
         </template>
       </Input>
-      <div :class="css({ w: '4.5rem', '& div': { ml: 1 } })">
+      <div :class="hstack({ mt: 2, gap: 1 })">
         <Button
-          size="sm"
+          size="xs"
           variant="ghost"
           @click="onSignOut"
           :disabled="loggingOut"
         >
           Sign out
-          <Spinner v-if="loggingOut" />
         </Button>
+        <Spinner v-if="loggingOut" />
       </div>
+      <ul :class="vstack({ mt: 6, alignItems: 'stretch', gap: 4 })">
+        <li v-for="post in guestbookPosts" :key="post.id">
+          <p :class="css({ color: 'text_main' })">
+            <span :class="css({ color: 'text_muted' })">
+              {{ post.guestName }}:
+            </span>
+            {{ post.message }}
+          </p>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
