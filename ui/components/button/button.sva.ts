@@ -4,7 +4,7 @@ export const buttonSva = sva({
   slots: ["root", "icon"],
   base: {
     root: {
-      width: "100%",
+      // width: "100%",
       border: "none",
       cursor: "pointer",
       color: "text_main",
@@ -23,6 +23,16 @@ export const buttonSva = sva({
   },
   variants: {
     size: {
+      xs: {
+        root: {
+          px: 2,
+          py: 1,
+          fontSize: "xs",
+        },
+        icon: {
+          width: 3,
+        },
+      },
       sm: {
         root: {
           px: 7,
