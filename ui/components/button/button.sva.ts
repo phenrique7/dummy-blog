@@ -4,7 +4,6 @@ export const buttonSva = sva({
   slots: ["root", "icon"],
   base: {
     root: {
-      // width: "100%",
       border: "none",
       cursor: "pointer",
       color: "text_main",
