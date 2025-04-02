@@ -195,16 +195,19 @@ async function onSignText() {
         </Button>
         <Spinner v-if="loggingOut" />
       </div>
-      <ul :class="vstack({ mt: 6, alignItems: 'stretch', gap: 4 })">
-        <li v-for="post in guestbookPosts" :key="post.id">
-          <p :class="css({ color: 'text_main' })">
-            <span :class="css({ color: 'text_muted' })">
-              {{ post.guestName }}:
-            </span>
-            {{ post.message }}
-          </p>
-        </li>
-      </ul>
     </div>
+    <ul
+      v-if="guestbookPosts.length > 0"
+      :class="vstack({ mt: 6, alignItems: 'stretch', gap: 4 })"
+    >
+      <li v-for="post in guestbookPosts" :key="post.id">
+        <p :class="css({ color: 'text_main' })">
+          <span :class="css({ color: 'text_muted' })">
+            {{ post.guestName }}:
+          </span>
+          {{ post.message }}
+        </p>
+      </li>
+    </ul>
   </div>
 </template>
