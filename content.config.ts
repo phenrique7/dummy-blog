@@ -11,6 +11,7 @@ export default defineContentConfig({
         category: z.string(),
         background: z.string(),
         description: z.string(),
+        thumbnail: z.string().optional(),
       }),
     }),
   },

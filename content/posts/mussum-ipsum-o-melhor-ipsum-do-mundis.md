@@ -2,12 +2,10 @@
 title: Mussum Ipsum o melhor ipsum do mundis
 description: Mussum Ipsum, cacilds vidis litro abertis. Não sou faixa preta cumpadi
 date: 2019-08-22 08:51:23
-image: /assets/images/mussum-ipsum.jpg
+thumbnail: /images/mussum-ipsum.jpg
 category: jekyll
 background: "#B31917"
 ---
-
-## Mussum Ipsum o melhor ipsum do mundis
 
 Mussum Ipsum, cacilds vidis litro abertis. Não sou faixa preta cumpadi, sou preto inteiris, inteiris. Paisis, filhis, espiritis santis. Interessantiss quisso pudia ce receita de bolis, mais bolis eu num gostis. Copo furadis é disculpa de bebadis, arcu quam euismod magna.
 
@@ -25,6 +23,6 @@ Em pé sem cair, deitado sem dormir, sentado sem cochilar e fazendo pose. Admodu
 
 > Mussum Ipsum, cacilds vidis litro abertis. Mauris nec dolor in eros commodo tempor. Aenean aliquam molestie leo, vitae iaculis nisl. Aenean aliquam molestie leo, vitae iaculis nisl. Cevadis im ampola pa arma uma pindureta. Casamentiss faiz malandris se pirulitá.
 
-## E para fecharis
+### E para fecharis
 
 Todo mundo vê os porris que eu tomo, mas ninguém vê os tombis que eu levo! Copo furadis é disculpa de bebadis, arcu quam euismod magna. Posuere libero varius. Nullam a nisl ut ante blandit hendrerit. Aenean sit amet nisi. Nec orci ornare consequat. Praesent lacinia ultrices consectetur. Sed non ipsum felis.
