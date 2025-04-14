@@ -4,20 +4,21 @@ import { css } from "styled-system/css";
 
 <template>
   <blockquote
-    :class="css({ px: 6, color: 'text_main', fontWeight: 'medium' })"
+    :class="
+      css({
+        px: 6,
+        my: 4,
+        color: 'text_main',
+        fontStyle: 'italic',
+        fontWeight: 'medium',
+        borderLeft: '0.3em solid',
+        borderColor: 'highlight',
+        '& p': {
+          padding: 0,
+        },
+      })
+    "
   >
     <slot />
   </blockquote>
 </template>
-
-<style scoped>
-blockquote {
-  margin: 1rem 0;
-  font-style: italic;
-  border-left: 0.3em solid var(--colors-highlight);
-}
-
-blockquote :deep(p) {
-  padding: 0;
-}
-</style>

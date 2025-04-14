@@ -27,14 +27,14 @@ const props = defineProps({
   <NuxtLink
     :href="props.href"
     :target="props.target"
-    :class="css({ color: 'highlight' })"
+    :class="
+      css({
+        color: 'highlight',
+        borderBottom: '1px dashed',
+        borderBottomColor: 'highlight',
+      })
+    "
   >
     <slot />
   </NuxtLink>
 </template>
-
-<style scoped>
-a {
-  border-bottom: 1px dashed var(--colors-highlight);
-}
-</style>

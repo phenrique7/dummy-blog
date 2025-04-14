@@ -1,19 +1,10 @@
 <script setup lang="ts">
 import { css } from "styled-system/css";
+import { useGenerateHeadings } from "#imports";
 
 const props = defineProps<{ id?: string }>();
 
-const { headings } = useRuntimeConfig().public.mdc;
-
-const generate = computed(() => {
-  const hasAnchorLinks =
-    (typeof headings?.anchorLinks === "boolean" &&
-      headings.anchorLinks === true) ||
-    (typeof headings?.anchorLinks === "object" &&
-      headings.anchorLinks?.h1);
-
-  return props.id && hasAnchorLinks;
-});
+const generate = useGenerateHeadings(props);
 </script>
 
 <template>
@@ -21,9 +12,11 @@ const generate = computed(() => {
     :id="props.id"
     :class="
       css({
+        mb: 4,
         lineHeight: '1.2',
         fontWeight: 'bold',
         color: 'text_main',
+        fontSize: { base: '5xl', lg: '6xl' },
       })
     "
   >
@@ -34,15 +27,3 @@ const generate = computed(() => {
   </h1>
 </template>
 
-<style scoped>
-h1 {
-  margin-bottom: var(--spacing-4);
-  font-size: var(--font-sizes-6xl);
-}
-
-@media (max-width: 768px) {
-  h1 {
-    font-size: var(--font-sizes-5xl);
-  }
-}
-</style>

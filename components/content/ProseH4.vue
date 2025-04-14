@@ -1,19 +1,10 @@
 <script setup lang="ts">
 import { css } from "styled-system/css";
+import { useGenerateHeadings } from "#imports";
 
 const props = defineProps<{ id?: string }>();
 
-const { headings } = useRuntimeConfig().public.mdc;
-
-const generate = computed(() => {
-  const hasAnchorLinks =
-    (typeof headings?.anchorLinks === "boolean" &&
-      headings?.anchorLinks === true) ||
-    (typeof headings?.anchorLinks === "object" &&
-      headings?.anchorLinks?.h2);
-
-  return props.id && hasAnchorLinks;
-});
+const generate = useGenerateHeadings(props);
 </script>
 
 <template>
@@ -21,9 +12,12 @@ const generate = computed(() => {
     :id="props.id"
     :class="
       css({
+        mt: 4,
+        mb: 2,
         lineHeight: '1.2',
         fontWeight: 'bold',
         color: 'text_main',
+        fontSize: { base: 'xl', md: '2xl' },
       })
     "
   >
@@ -33,16 +27,3 @@ const generate = computed(() => {
     <slot v-else />
   </h4>
 </template>
-
-<style scoped>
-h4 {
-  margin: var(--spacing-2) 0;
-  font-size: var(--font-sizes-2xl);
-}
-
-@media (max-width: 768px) {
-  h4 {
-    font-size: var(--font-sizes-xl);
-  }
-}
-</style>

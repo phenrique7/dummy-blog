@@ -3,15 +3,11 @@ import { css } from "styled-system/css";
 </script>
 
 <template>
-  <p
+  <ul
     :class="
-      css({
-        color: 'text_main',
-        textAlign: 'justify',
-        py: { base: 1, md: 1.5 },
-      })
+      css({ listStyle: 'disc', pl: 10, margin: '0.75rem auto 1rem' })
     "
   >
     <slot />
-  </p>
+  </ul>
 </template>

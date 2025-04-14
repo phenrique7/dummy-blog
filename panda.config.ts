@@ -10,6 +10,7 @@ export default defineConfig({
     "./ui/**/*.{js,ts,vue}",
     "./pages/**/*.{js,ts,vue}",
     "./layouts/**/*.{js,ts,vue}",
+    "./components/**/*.{js,ts,vue}",
   ],
 
   // Files to exclude
