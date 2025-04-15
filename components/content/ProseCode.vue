@@ -1,21 +1,12 @@
 <script setup lang="ts">
 import { css } from "styled-system/css";
-
-const codeEl = useTemplateRef("code-el");
-
-onMounted(() => {
-  if (codeEl.value) {
-    codeEl.value.parentElement!.style.setProperty("margin", "1rem 0");
-  }
-});
 </script>
 
 <template>
   <code
-    ref="code-el"
     :class="
       css({
-        padding: 3,
+        padding: 1,
         bg: 'bg_code',
         fontSize: 'sm',
         color: 'text_main',

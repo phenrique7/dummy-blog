@@ -11,7 +11,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 Check out: [https://en.wikipedia.org/wiki/Metasyntactic_variable](https://en.wikipedia.org/wiki/Metasyntactic_variable)
 
-Id velit ut tortor pretium viverra suspendisse potenti. Mi proin sed libero enim sed faucibus. Quam lacus suspendisse faucibus interdum posuere lorem ipsum. Sed elementum tempus egestas sed sed. Turpis egestas pretium aenean pharetra magna ac placerat. Lorem donec massa sapien faucibus et molestie.
+Id velit ut `echo $user` pretium viverra suspendisse potenti. Mi proin sed libero enim sed faucibus. Quam lacus suspendisse faucibus interdum posuere lorem ipsum. Sed elementum tempus egestas sed sed. Turpis egestas pretium aenean pharetra magna ac placerat. Lorem donec massa sapien faucibus et molestie.
 
 > Sit amet risus nullam eget felis eget nunc lobortis. Egestas fringilla phasellus faucibus scelerisque eleifend donec. Pharetra sit amet aliquam id diam maecenas ultricies. Magna ac placerat vestibulum lectus mauris ultrices eros in.
 
@@ -34,7 +34,9 @@ Praesent vel viverra nisi. Mauris aliquet nunc non turpis scelerisque, eget. Que
 
 Sapien in monti palavris qui num significa nadis i pareci latim. Mais vale um bebadis conhecidiss, que um alcoolatra anonimis. Suco de cevadiss, é um leite divinis, qui tem lupuliz, matis, aguis e fermentis. Nullam volutpat risus nec leo commodo, ut interdum diam laoreet. Sed non consequat odio.
 
-`const foo = "bar";`
+```js
+const foo = "bar";
+```
 
 Viva Forevis aptent taciti sociosqu ad litora torquent. Suco de cevadiss deixa as pessoas mais interessantis. Tá deprimidis, eu conheço uma cachacis que pode alegrar sua vidis. Admodum accumsan disputationi eu sit. Vide electram sadipscing et per.
 
