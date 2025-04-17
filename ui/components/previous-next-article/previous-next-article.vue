@@ -2,22 +2,22 @@
 import { flex } from "styled-system/patterns";
 
 const props = defineProps<{
-  currentPathPost: string;
+  articlePath: string;
 }>();
 
-const { data } = await useAsyncData("posts", () =>
+const { data } = await useAsyncData("articles", () =>
   queryCollection("article")
     .select("title", "path", "date")
     .order("date", "DESC")
     .all(),
 );
 
-const posts = data.value ?? [];
-const currentPostIndex = posts.findIndex(
-  (post) => post.path === props.currentPathPost,
+const articles = data.value ?? [];
+const currentArticleIndex = articles.findIndex(
+  (post) => post.path === props.articlePath,
 );
-const previousPost = posts[currentPostIndex - 1];
-const nextPost = posts[currentPostIndex + 1];
+const previousArticle = articles[currentArticleIndex - 1];
+const nextArticle = articles[currentArticleIndex + 1];
 </script>
 
 <template>
@@ -34,7 +34,7 @@ const nextPost = posts[currentPostIndex + 1];
     "
   >
     <NuxtLink
-      :to="previousPost?.path"
+      :to="previousArticle?.path"
       :class="
         flex({
           width: '50%',
@@ -46,17 +46,17 @@ const nextPost = posts[currentPostIndex + 1];
           transition: 'background 0.3s',
           fontSize: { base: 'sm', md: 'md' },
           boxShadow: '1px 0 0 0 var(--colors-borders)',
-          pointerEvents: previousPost ? 'auto' : 'none',
+          pointerEvents: previousArticle ? 'auto' : 'none',
           _hover: {
             bg: 'borders',
           },
         })
       "
     >
-      {{ previousPost?.title ?? null }}
+      {{ previousArticle?.title ?? null }}
     </NuxtLink>
     <NuxtLink
-      :to="nextPost?.path"
+      :to="nextArticle?.path"
       :class="
         flex({
           width: '50%',
@@ -67,14 +67,14 @@ const nextPost = posts[currentPostIndex + 1];
           px: { base: 4, md: 12 },
           justifyContent: 'flex-end',
           transition: 'background 0.3s',
-          pointerEvents: nextPost ? 'auto' : 'none',
+          pointerEvents: nextArticle ? 'auto' : 'none',
           _hover: {
             bg: 'borders',
           },
         })
       "
     >
-      {{ nextPost?.title ?? null }}
+      {{ nextArticle?.title ?? null }}
     </NuxtLink>
   </section>
 </template>

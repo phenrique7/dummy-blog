@@ -21,7 +21,7 @@ export class GuestbookPostsService {
    * @param data Guestbook post data
    * @returns The guestbook post data created
    */
-  public async register(
+  public async registerPosts(
     guestId: number,
     data: CreateGuestbookPostsDTO,
   ): Promise<CreateGuestbookPostResponse> {
@@ -57,7 +57,7 @@ export class GuestbookPostsService {
    * Get all guestbook posts from the database
    * @returns All guestbook posts
    */
-  public async getAll(): Promise<GuestbookPostResponse[]> {
+  public async getPosts(): Promise<GuestbookPostResponse[]> {
     this.logger
       .category("GuestbookPostsService::getAll")
       .level("debug")

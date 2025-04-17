@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { css } from "styled-system/css";
 import { container } from "styled-system/patterns";
-import PreviousNextPost from "~/ui/components/previous-next-post/previous-next-post.vue";
+import ArticleComments from "~/ui/components/article-comments/article-comments.vue";
+import PreviousNextArticle from "~/ui/components/previous-next-article/previous-next-article.vue";
 
 const route = useRoute();
 
@@ -35,11 +36,11 @@ function formatPostDate(dateString: string) {
       :class="
         container({
           pt: 5,
-          pb: 20,
           px: 6,
           md: { py: 16 },
           lg: { maxW: '2xl' },
           xl: { maxW: '3xl' },
+          pb: { base: 12, md: 20 },
         })
       "
     >
@@ -55,7 +56,8 @@ function formatPostDate(dateString: string) {
       </div>
       <ContentRenderer prose :value="page" />
     </article>
-    <PreviousNextPost :currentPathPost="page.path" />
+    <PreviousNextArticle :articlePath="page.path" />
+    <ArticleComments :articleId="page.id" />
   </div>
   <template v-else>
     <div>

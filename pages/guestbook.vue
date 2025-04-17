@@ -17,19 +17,10 @@ useSeoMeta({
   twitterCard: "summary_large_image",
 });
 
-const route = useRoute();
 const signText = ref("");
-const loggingOut = ref(false);
 const postingMessage = ref(false);
 
-const checkSessionQuery = await useFetch<{ logged: boolean }>(
-  "/api/session",
-  {
-    key: "__fk_check-session__",
-  },
-);
-
-const logged = computed(() => checkSessionQuery.data.value?.logged);
+const auth = await useAuth();
 
 const guestbookPostsQuery = await useFetch<GuestbookPostResponse[]>(
   "/api/guestbook-posts",
@@ -41,23 +32,6 @@ const guestbookPostsQuery = await useFetch<GuestbookPostResponse[]>(
 const guestbookPosts = computed(
   () => guestbookPostsQuery.data.value ?? [],
 );
-
-function onSignIn(provider: "google" | "github") {
-  window.location.href = `/login/${provider}?redirectUrl=${route.path}`;
-}
-
-async function onSignOut() {
-  loggingOut.value = true;
-
-  await $fetch("/api/session", {
-    method: "DELETE",
-    cache: "no-cache",
-  });
-
-  loggingOut.value = false;
-
-  await checkSessionQuery.refresh();
-}
 
 async function onSignText() {
   if (signText.value.trim() !== "") {
@@ -109,7 +83,7 @@ async function onSignText() {
       Sign my guestbook
     </h1>
     <div
-      v-if="!logged"
+      v-if="!auth.logged.value"
       :class="
         hstack({
           mt: 6,
@@ -119,13 +93,13 @@ async function onSignText() {
         })
       "
     >
-      <Button variant="oauth" @click="onSignIn('google')">
+      <Button variant="oauth" @click="auth.onSignIn('google')">
         <template v-slot:icon>
           <GoogleIcon />
         </template>
         Sign in with Google
       </Button>
-      <Button variant="oauth" @click="onSignIn('github')">
+      <Button variant="oauth" @click="auth.onSignIn('github')">
         <template v-slot:icon>
           <GitHubIcon :class="css({ fill: 'text_main' })" />
         </template>
@@ -173,12 +147,12 @@ async function onSignText() {
         <Button
           size="xs"
           variant="ghost"
-          @click="onSignOut"
-          :disabled="loggingOut"
+          @click="auth.onSignOut"
+          :disabled="auth.loggingOut"
         >
           Sign out
         </Button>
-        <Spinner v-if="loggingOut" />
+        <Spinner v-if="auth.loggingOut" />
       </div>
     </div>
     <ul
