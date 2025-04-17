@@ -1,8 +1,8 @@
+import { z } from "zod";
 import type { EventHandlerRequest, H3Event } from "h3";
 import { BaseHandler } from "~/lib/common/handler/base.handler";
 import { createGuestbookPostBodySchema } from "~/services/guestbook-posts/dto/schemas";
 import { GuestbookPostsService } from "~/services/guestbook-posts/service/guestbook-posts.service";
-import { z } from "zod";
 
 /**
  * GuestbookPosts handler. This class exports all related operations for guestbook posts.

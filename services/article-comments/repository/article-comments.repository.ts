@@ -29,7 +29,7 @@ export class ArticleCommentsRepository extends BaseRepository {
           G.name AS article_comment_guest_name
         FROM article_comments AS AC
                INNER JOIN guests AS G ON AC.guest_id = G.id
-        WHERE AC.article_id = ?1
+        WHERE AC.id = ?1
       `,
       )
       .bind(commentId);
