@@ -4,8 +4,8 @@ import { container, flex, hstack, vstack } from "styled-system/patterns";
 import GoogleIcon from "~/ui/icons/google-icon.vue";
 import GithubIcon from "~/ui/icons/github-icon.vue";
 import Button from "~/ui/components/button/button.vue";
-import type { GetArticleCommentDTO } from "~/services/article-comments/dto/dto";
 import Spinner from "~/ui/components/spinner/spinner.vue";
+import type { GetArticleCommentDTO } from "~/services/article-comments/dto/dto";
 
 const props = defineProps<{
   articleId: string;
@@ -53,7 +53,7 @@ function formatRelativeTime(timestamp: number): string {
 }
 
 async function onSubmitComment() {
-  if (comment.value.trim() !== "") {
+  if (comment.value.trim() !== "" && !postingComment.value) {
     postingComment.value = true;
 
     await $fetch("/api/article-comments", {
@@ -155,14 +155,18 @@ async function onSubmitComment() {
     </div>
     <ul
       v-if="articleComments.length > 0"
-      :class="vstack({ mt: 12, alignItems: 'stretch', gap: 4 })"
+      :class="vstack({ mt: 12, alignItems: 'stretch', gap: 5 })"
     >
-      <li :key="comment.id" v-for="comment in articleComments">
+      <li
+        :key="comment.id"
+        v-for="comment in articleComments"
+        :class="vstack({ gap: 1.5, alignItems: 'stretch' })"
+      >
         <div :class="flex({ alignItems: 'center', gap: 2 })">
-          <span :class="css({ color: 'text_muted' })">
-            {{ comment.guestName }}:
-          </span>
           <span :class="css({ color: 'text_main', fontWeight: 'medium' })">
+            {{ comment.guestName }}
+          </span>
+          <span :class="css({ color: 'text_muted' })">
             {{ formatRelativeTime(comment.createdAt) }}
           </span>
         </div>

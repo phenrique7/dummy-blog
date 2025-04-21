@@ -55,7 +55,7 @@ export class ArticleCommentsService {
       id: comment.article_comment_id,
       guestName: comment.article_comment_guest_name,
       comment: comment.article_comment_text_comment,
-      createdAt: comment.article_comment_created_at,
+      createdAt: comment.article_comment_created_at * 1000,
     }));
   }
 
@@ -106,7 +106,7 @@ export class ArticleCommentsService {
       id: comment.article_comment_id,
       guestName: comment.article_comment_guest_name,
       comment: comment.article_comment_text_comment,
-      createdAt: comment.article_comment_created_at,
+      createdAt: comment.article_comment_created_at * 1000,
     };
   }
 }
