@@ -2,5 +2,5 @@ import { GuestbookPostsHandler } from "~/services/guestbook-posts/handler/guestb
 
 export default defineEventHandler((event) => {
   setResponseStatus(event, 201);
-  return new GuestbookPostsHandler(event).registerPost();
+  return new GuestbookPostsHandler(event).store();
 });

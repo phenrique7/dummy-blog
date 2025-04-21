@@ -10,6 +10,7 @@ export default defineConfig({
     "./ui/**/*.{js,ts,vue}",
     "./pages/**/*.{js,ts,vue}",
     "./layouts/**/*.{js,ts,vue}",
+    "./components/**/*.{js,ts,vue}",
   ],
 
   // Files to exclude
@@ -114,6 +115,12 @@ export default defineConfig({
         },
         db_black: {
           value: { base: "#000000", _dark: "#000000" },
+        },
+        bg_code: {
+          value: { base: "rgb(248, 250, 522)", _dark: "rgb(30, 41, 59)" },
+        },
+        border_code: {
+          value: { base: "rgb(226, 232, 240)", _dark: "rgb(51, 65, 85)" },
         },
       },
     },

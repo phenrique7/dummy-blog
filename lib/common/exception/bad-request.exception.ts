@@ -1,7 +1,7 @@
 import { BaseException } from "~/lib/common/exception/base.exception";
 
 /**
- * Exception that models an HTTP 400 error - Bad request (entity json) provided
+ * Exception that models an HTTP 400 error - Bad request (entity JSON) provided
  */
 export class BadRequestException extends BaseException {
   /**

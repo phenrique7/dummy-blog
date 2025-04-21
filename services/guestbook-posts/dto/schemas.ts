@@ -1,5 +1,5 @@
 import { z } from "zod";
 
-export const createGuestbookPostSchema = z.object({
+export const createGuestbookPostBodySchema = z.object({
   message: z.string().min(1),
 });

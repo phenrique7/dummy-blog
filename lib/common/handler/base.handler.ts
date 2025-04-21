@@ -1,4 +1,4 @@
-import { z, type ZodSchema } from "zod";
+import { type ZodSchema } from "zod";
 import type { EventHandlerRequest, H3Event } from "h3";
 import { Logger } from "~/lib/common/logger/logger";
 import { Parser } from "~/lib/common/parser/parser";
@@ -19,7 +19,7 @@ export abstract class BaseHandler {
 
   /**
    * Validates user session and returns session data
-   * @param options If validate option is true, validates session, otherwise returns session without validation. Default: false
+   * @param options If a validate option is true, validates session, otherwise returns session without validation. Default: false
    * @returns session Session data
    */
   private async getSession(
@@ -54,23 +54,39 @@ export abstract class BaseHandler {
    * If the session option is set to true, the handler function will be called only if the guest is logged in.
    * @returns Handler function result
    */
-  protected async handleRequest<T>(
+  protected async handleRequest<B = null, Q = null, T = any>(
     handler: (args: {
-      body: any;
-      query: any;
+      body: B;
+      query: Q;
       session: SessionData;
     }) => Promise<T>,
-    options: Partial<{ validateSession: boolean; schema: ZodSchema }> = {},
+    options: Partial<{
+      validateSession: boolean;
+      bodySchema: ZodSchema | null;
+      querySchema: ZodSchema | null;
+    }> = {},
   ) {
-    const { validateSession = false, schema = z.object({}) } = options;
+    const {
+      validateSession = false,
+      bodySchema = null,
+      querySchema = null,
+    } = options;
 
     try {
-      let body = null;
-      const query = getQuery(this.event);
+      let body: B = null as any;
+      let query: Q = null as any;
 
-      if (this.event.method === "POST" || this.event.method === "PUT") {
+      if (querySchema !== null) {
+        const rawQuery = getQuery(this.event);
+        query = new Parser<Q>(querySchema).parseQuery(rawQuery);
+      }
+
+      if (
+        (this.event.method === "POST" || this.event.method === "PUT") &&
+        bodySchema !== null
+      ) {
         body = await readValidatedBody(this.event, (body) =>
-          new Parser(schema).parseBody(body),
+          new Parser<B>(bodySchema).parseBody(body),
         );
       }
 
