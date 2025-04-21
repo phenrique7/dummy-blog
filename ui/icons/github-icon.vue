@@ -13,7 +13,7 @@ const { color = "currentColor", ...other } = defineProps<{
     aria-hidden="true"
     focusable="false"
     xmlns="http://www.w3.org/2000/svg"
-	v-bind="other"
+    v-bind="other"
   >
     <path
       fill-rule="evenodd"

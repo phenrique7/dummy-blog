@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { flex } from "styled-system/patterns";
+import { css } from "styled-system/css";
 
 const props = defineProps<{
   articlePath: string;
@@ -53,6 +54,27 @@ const nextArticle = articles[currentArticleIndex + 1];
         })
       "
     >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        :class="
+          css({
+            h: 5,
+            mr: 2,
+            minW: 5,
+            display: previousArticle ? 'block' : 'none',
+          })
+        "
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+        />
+      </svg>
       {{ previousArticle?.title ?? null }}
     </NuxtLink>
     <NuxtLink
@@ -75,18 +97,27 @@ const nextArticle = articles[currentArticleIndex + 1];
       "
     >
       {{ nextArticle?.title ?? null }}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        :class="
+          css({
+            h: 5,
+            ml: 2,
+            minW: 5,
+            display: nextArticle ? 'block' : 'none',
+          })
+        "
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+        />
+      </svg>
     </NuxtLink>
   </section>
 </template>
-
-<style scoped>
-section :deep(a:first-child)::before {
-  content: v-bind('previousPost ? "' ← '" : "' '"');
-  margin-right: 0.5rem;
-}
-
-section :deep(a:last-child)::after {
-  content: v-bind('nextPost ? "' → '" : "' '"');
-  margin-left: 0.5rem;
-}
-</style>

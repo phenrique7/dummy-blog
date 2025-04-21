@@ -1,5 +1,10 @@
 <template>
-  <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    width="48"
+    height="48"
+    viewBox="0 0 48 48"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <defs>
       <path
         id="a"
@@ -25,3 +30,5 @@
     ></path>
   </svg>
 </template>
+<script setup lang="ts">
+</script>
