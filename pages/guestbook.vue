@@ -148,11 +148,11 @@ async function onSignText() {
           size="xs"
           variant="ghost"
           @click="auth.onSignOut"
-          :disabled="auth.loggingOut"
+          :disabled="auth.loggingOut.value"
         >
           Sign out
         </Button>
-        <Spinner v-if="auth.loggingOut" />
+        <Spinner v-if="auth.loggingOut.value" />
       </div>
     </div>
     <ul
